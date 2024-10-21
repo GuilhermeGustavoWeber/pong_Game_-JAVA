@@ -1,14 +1,17 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.Random;
 
 public class Ball {
 
 	public double x, y, dx, dy, speed = 1.6;
-	public int width, height;
+	public int width, height, pa=0, pv=0;
+    public static boolean resetPts; 
 	
 	public Ball(int x, int y) {
+        this.pv = 0;
 		this.x = x;
 		this.y = y;
 		this.width = 3;
@@ -19,8 +22,22 @@ public class Ball {
 		dy = Math.sin(Math.toRadians(angle));
 	}
 	
-	public void tick() {
+	public void tick() throws IOException {
 		
+        int[] pts = Ponts.loadPTS();
+        this.pa = pts[0];
+        this.pv = pts[1];
+
+        if (resetPts == true) {
+            resetPts = false;
+            pts = Ponts.resetPTS();
+            this.pa = pts[0];
+            this.pv = pts[1];
+            Ponts.savePTS(this.pa, this.pv);
+            System.out.println("\n\nRESET!!!");
+            new Game();
+        }
+
 		if(x+(dx*speed) + width >= Game.WIDTH) {
 			dx*=-1;
 		}else if(x+(dx*speed) < 0) {
@@ -29,13 +46,21 @@ public class Ball {
 		
 		if(y >= Game.HEIGHT) {
 			//Ponto do Inimigo
-			System.out.println("Ponto do Time VERMELHO!!!");
+            this.pv++;
+            Ponts.savePTS(this.pa, this.pv);
+			System.out.println("\n\nPonto do Time VERMELHO!!!");
+            System.out.println("\nAzul  Vs  Vermelho");
+            System.out.println(this.pa + "Pts  |  " + this.pv + "Pts");
 			new Game();
 			return;
 			
 		}else if (y < 0) {
 			//Ponto do Jogador
-			System.out.println("Ponto do Time AZUL!!!");
+            this.pa++;
+            Ponts.savePTS(this.pa, this.pv);
+			System.out.println("\n\nPonto do Time AZUL!!!");
+            System.out.println("\nAzul  Vs  Vermelho");
+            System.out.println(this.pa + "Pts  |  " + this.pv + "Pts");
 			new Game();
 			return;
 		}
