@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 
@@ -19,6 +20,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static Player player;
 	public static Enemy enemy;
 	public static Ball ball;
+    public static Ponts ponts;
 	
 	
 	public Game() {
@@ -46,7 +48,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		new Thread(game).start();
 	}
 	
-	public void tick() {
+	public void tick() throws IOException {
 		player.tick();
 		enemy.tick();
 		ball.tick();
@@ -77,7 +79,9 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	@Override
 	public void run() {
 		while(true) {
-			tick();
+            try {
+                tick();
+            } catch (IOException ex) {}
 			render();
 			try {
 				Thread.sleep(1000/60);
@@ -89,17 +93,21 @@ public class Game extends Canvas implements Runnable, KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
-	}
+    
+    }
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+		
+        if(e.getKeyCode() == KeyEvent.VK_R) {
+			ball.resetPts = true;
+	    }
+
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			player.right = true;	
 		}else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
 			player.left = true;
 		}
-		
 	}
 
 	@Override
