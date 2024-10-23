@@ -11,6 +11,7 @@ public class Ball {
     public static boolean resetPts; 
 	
 	public Ball(int x, int y) {
+        this.pv = 0;
 		this.x = x;
 		this.y = y;
 		this.width = 3;
