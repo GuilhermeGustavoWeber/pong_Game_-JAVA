@@ -13,8 +13,8 @@ public class Enemy {
 		this.height = 5;
 	}
 	
-	public void tick() {
-		x+= (Game.ball.x - x - 6) * 0.07;
+	public void tick(double dificuldade) {
+		x+= (Game.ball.x - x - 13) * dificuldade;
 	
 	  if(x+width > Game.WIDTH) {
 		  x = Game.WIDTH - width;

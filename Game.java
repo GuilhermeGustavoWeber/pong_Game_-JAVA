@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 
@@ -19,12 +20,19 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static Player player;
 	public static Enemy enemy;
 	public static Ball ball;
+    public static Ponts ponts;
+
+	public Menu menu;
+	public static String gameState = "MENU";
 	
 	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
 		this.addKeyListener(this);
 		
+		menu = new Menu();
+
+
 		player = new Player(60, HEIGHT-5);
 		enemy = new Enemy(60, 0);
 		ball = new Ball(100, HEIGHT/2 - 1);
@@ -34,7 +42,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static void main(String[] args) {
 		
 		Game game = new Game();
-		JFrame frame = new JFrame("Pong Game: Study Test by Guilherme Weber");
+		JFrame frame = new JFrame("Pong Game | GW7's Studios");
 		
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,10 +54,26 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		new Thread(game).start();
 	}
 	
-	public void tick() {
-		player.tick();
-		enemy.tick();
-		ball.tick();
+	public void tick() throws IOException {
+
+		if (gameState == "FAC") {
+			player.tick();
+			enemy.tick(0.03);
+			ball.tick();
+
+		} else if (gameState == "MED") {
+			player.tick();
+			enemy.tick(0.045);
+			ball.tick();
+
+		} else if (gameState == "DEF") {
+			player.tick();
+			enemy.tick(0.06);
+			ball.tick();
+
+		} else if (gameState == "MENU") {
+			menu.tick();
+		}
 	}
 	
 	public void render() {
@@ -67,17 +91,26 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		enemy.render(g);
 		ball.render(g);
 		
+		if(gameState == "MENU")
+			menu.render(g);
+		
 		g = bs.getDrawGraphics();
 		g.drawImage(layer, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
 		
 		bs.show();
+
+		
 	}
 	
 	
 	@Override
 	public void run() {
+
+		requestFocus();
 		while(true) {
-			tick();
+            try {
+                tick();
+            } catch (IOException ex) {}
 			render();
 			try {
 				Thread.sleep(1000/60);
@@ -89,24 +122,44 @@ public class Game extends Canvas implements Runnable, KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
-	}
+    
+    }
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			player.right = true;	
-		}else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-			player.left = true;
+		
+        if(e.getKeyCode() == KeyEvent.VK_R) {
+			if(gameState != "MENU")
+				Ball.resetPts = true;
+	    }
+
+		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+			menu.enter = true;
+			Sound.confirm.play();
 		}
 		
+		if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
+			menu.down = true;
+			Sound.select.play();
+	    }
+		
+		if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
+			menu.up = true;
+			Sound.select.play();
+	    }
+
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D ) {
+			player.right = true;	
+		}else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
+			player.left = true;
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
 			player.right = false;	
-		}else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+		}else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
 			player.left = false;
 		}
 		
