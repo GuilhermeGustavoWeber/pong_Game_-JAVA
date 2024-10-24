@@ -7,21 +7,17 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable, KeyListener{
 
 	private static final long serialVersionUID = 1L;
-	public static int WIDTH = 160, HEIGHT = 120, SCALE = 3; 
-	
+	public static int WIDTH = 160, HEIGHT = 120, SCALE = 3;
 	public BufferedImage layer = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
-	
 	public static Player player;
 	public static Enemy enemy;
 	public static Ball ball;
-    	public static Ponts ponts;
-
+    public static Ponts ponts;
 	public Menu menu;
 	public static String gameState = "MENU";
 	
