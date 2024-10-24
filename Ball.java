@@ -16,7 +16,7 @@ public class Ball {
 		this.width = 3;
 		this.height = 3;
 	
-		int angle = new Random().nextInt(120 - 45) + 45 + 1;
+		int angle = new Random().nextInt(120 - 45) - 135  + 1;
 		dx = Math.cos(Math.toRadians(angle));
 		dy = Math.sin(Math.toRadians(angle));
 	}
@@ -26,7 +26,7 @@ public class Ball {
         int[] pts = Ponts.loadPTS();
         this.pa = pts[0];
         this.pv = pts[1];
-
+		
         if (resetPts == true) {
             resetPts = false;
             pts = Ponts.resetPTS();
