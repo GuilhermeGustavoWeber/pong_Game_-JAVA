@@ -17,7 +17,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static Player player;
 	public static Enemy enemy;
 	public static Ball ball;
-    public static Ponts ponts;
+   	public static Ponts ponts;
 	public Menu menu;
 	public static String gameState = "MENU";
 	
