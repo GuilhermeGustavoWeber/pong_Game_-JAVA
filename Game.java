@@ -1,7 +1,9 @@
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -17,10 +19,12 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static Player player;
 	public static Enemy enemy;
 	public static Ball ball;
-    public static Ponts ponts;
+   	public static Ponts ponts;
 	public Menu menu;
 	public static String gameState = "MENU";
-	
+	private boolean showMessageGamerOver = false;
+	private int framesGamerOver = 0;
+	public static boolean win = false, lose = false;
 	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
@@ -69,6 +73,17 @@ public class Game extends Canvas implements Runnable, KeyListener{
 
 		} else if (gameState == "MENU") {
 			menu.tick();
+		} else if (gameState == "GAMEOVER") {
+			this.framesGamerOver++;
+			if (this.framesGamerOver == 30) {
+				this.framesGamerOver = 0;
+			
+				if (this.showMessageGamerOver) {
+					this.showMessageGamerOver = false;
+				} else {
+					this.showMessageGamerOver = true;
+				}
+			}
 		}
 	}
 	
@@ -87,15 +102,39 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		enemy.render(g);
 		ball.render(g);
 		
-		if(gameState == "MENU")
+		if(gameState == "MENU") {
 			menu.render(g);
-		
+		}
+
+		if(gameState == "GAMEOVER") {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setColor(new Color(0, 0, 0, 100));
+			g.fillRect(0, 0, Game.WIDTH * Game.SCALE, Game.HEIGHT * Game.SCALE);
+			
+			g.setColor(Color.WHITE);
+			g.setFont(new Font("arial", Font.BOLD, 30 / 3));
+			g.drawString("Game Over", (Game.WIDTH * Game.SCALE) / 2 - 185, (Game.HEIGHT * Game.SCALE) / 2 - 150);
+			if (win) {
+				g.setColor(Color.green);
+				g.setFont(new Font("arial", Font.BOLD, 55 / 3));
+				g.drawString("!Você Ganhou!", (Game.WIDTH * Game.SCALE) / 2 - 220, (Game.HEIGHT * Game.SCALE) / 2 - 130);
+			} else if (lose) {
+				g.setColor(Color.red);
+				g.setFont(new Font("arial", Font.BOLD, 55 / 3));
+				g.drawString("!Você Perdeu!", (Game.WIDTH * Game.SCALE) / 2 - 220, (Game.HEIGHT * Game.SCALE) / 2 - 130);
+			}
+			
+			if(showMessageGamerOver) {
+				g.setColor(Color.WHITE);
+				g.setFont(new Font("arial", Font.BOLD, (26 / 3) + 1));
+				g.drawString("> 'ENTER' <", (Game.WIDTH * Game.SCALE) / 2 - 185, (Game.HEIGHT * Game.SCALE) / 2 - 90);
+			}
+		}
+
 		g = bs.getDrawGraphics();
 		g.drawImage(layer, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
 		
 		bs.show();
-
-		
 	}
 	
 	
@@ -130,8 +169,16 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	    }
 
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-			menu.enter = true;
-			Sound.confirm.play();
+			if(gameState == "MENU")
+				menu.enter = true;
+				Sound.confirm.play();
+			
+			if(gameState == "GAMEOVER") {
+				gameState = "MENU";
+				win = false;
+				lose = false;
+				Ball.resetPts = true;
+			}
 		}
 		
 		if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
@@ -158,6 +205,5 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		}else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
 			player.left = false;
 		}
-		
 	}
 }

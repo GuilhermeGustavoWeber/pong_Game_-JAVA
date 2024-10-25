@@ -26,16 +26,6 @@ public class Ball {
         int[] pts = Ponts.loadPTS();
         this.pa = pts[0];
         this.pv = pts[1];
-		
-        if (resetPts == true) {
-            resetPts = false;
-            pts = Ponts.resetPTS();
-            this.pa = pts[0];
-            this.pv = pts[1];
-            Ponts.savePTS(this.pa, this.pv);
-			Game.gameState = "MENU";
-            new Game();
-        }
 
 		if(x+(dx*speed) + width >= Game.WIDTH) {
 			dx*=-1;
@@ -43,6 +33,23 @@ public class Ball {
 			dx*=-1;
 		}
 		
+		if (resetPts == true) {
+            resetPts = false;
+            pts = Ponts.resetPTS();
+            this.pa = pts[0];
+            this.pv = pts[1];
+            Ponts.savePTS(this.pa, this.pv);
+            new Game();
+        }
+
+		if (this.pa == 10) {
+			Game.win = true;
+			Game.gameState = "GAMEOVER";
+		} else if (this.pv == 10) {
+			Game.lose = true;
+			Game.gameState = "GAMEOVER";
+		}
+
 		if(y >= Game.HEIGHT) {
 			//Ponto do Inimigo
 			Sound.pointEnemy.play();
